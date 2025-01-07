@@ -1,4 +1,4 @@
-const { Schema } = require("mongoose")
+const { Schema, model } = require("mongoose")
 
 const userSchema = new Schema({
   fullName: {
@@ -27,4 +27,8 @@ const userSchema = new Schema({
     enum: ["USER", "ADMIN"],
     default: "USER",
   }
-}, { timestamps: true })
+}, { timestamps: true });
+
+const User = model("user", userSchema);
+
+module.exports =  User;
