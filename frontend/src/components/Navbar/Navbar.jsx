@@ -7,11 +7,11 @@ const Navbar = () => {
       <div className='flex items-center text-slate-300'>
         <ul className='flex items-center gap-x-8'>
           <li>
-          <a>Home</a>
+          <a href='/'>Home</a>
           </li>
         
       <li>
-      <a>Add Blog</a>
+      <a href='/add-blog'>Add Blog</a>
       </li>
       <li>
       <a>Aarushi Bhatia</a>
