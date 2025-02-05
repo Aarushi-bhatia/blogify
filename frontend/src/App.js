@@ -1,9 +1,9 @@
-import './styles.css';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar/Navbar';
-import SignUp from './components/SignUp/SignUp';
-import Hero from './components/Hero/Hero';
-import AddBlog from './components/AddBlog/AddBlog';
+import "./styles.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import SignUp from "./components/SignUp";
+import Hero from "./components/Hero";
+import AddBlog from "./components/AddBlog";
 
 function App() {
   return (
