@@ -5,7 +5,7 @@ const app = express();
 app.use(express.json());
 
 mongoose.connect(
-  "mongodb+srv://aarushibhatia27:VLawYgTAFqL1M0z2@cluster0.qmeu0.mongodb.net/"
+  process.env.MONGODB_URL
 );
 
 const UserSchema = new mongoose.Schema({
@@ -72,7 +72,7 @@ const PostSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Tag'
   }]
-});
+},{ timestamps: true });
 
 const CommentSchema = new mongoose.Schema({
   content: {
@@ -104,10 +104,9 @@ const TagSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
-  post: {
+  posts: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Post",
-    required: true,
   },
 });
 
@@ -119,5 +118,6 @@ const Tag = mongoose.model('Tag', TagSchema);
 module.exports = {
   User,
   Post,
-  Comment
+  Comment,
+  Tag
 }
