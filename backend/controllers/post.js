@@ -4,7 +4,7 @@ const asyncHandler = require("express-async-handler");
 const createPost = asyncHandler(async (req, res) => {
   try {
     const { title, subtitle, content } = req.body;
-    const img = req.file ? `/uploads/${req.file.filename}` : null;
+    const img = req.file ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}` : null;
     const post = await Post.create({
       title,
       subtitle,

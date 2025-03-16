@@ -9,12 +9,12 @@ const router = express.Router();
 const storage = multer.diskStorage({
   destination: "./uploads/",
   filename: (req, file, cb) => {
-    cb(null, Date.now(), +path.extname(file.originalname));
+    cb(null, Date.now() + path.extname(file.originalname));
   },
 });
 
 const upload = multer({ storage });
-router.post("/", protect, upload.single("image"), createPost);
+router.post("/", protect, upload.single("img"), createPost);
 router.get("/", getPosts);
 router.get("/:id", getPostById);
 

@@ -32,7 +32,7 @@ const Blog = () => {
             <h2 className="text-white">{blog.subtitle}</h2>
             
             </div>
-            <img src={blog.img} alt={blog.title} className="w-60 h-auto" />
+            <img src={`http://localhost:5000${blog.img}`} alt={blog.title} className="w-60 h-auto" />
           </div>
         ))}
       </div>

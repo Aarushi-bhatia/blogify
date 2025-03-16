@@ -1,36 +1,56 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NotebookPen, Search, User } from "lucide-react";
 import axios from "axios";
 
 const Navbar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSignup, setIsSignup] = useState(true);
+  const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
   });
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
   const toggleModal = () => setIsModalOpen(!isModalOpen);
   const toggleForm = () => setIsSignup(!isSignup);
 
-  const handleChange =(e)=>{
-    setFormData({...formData, [e.target.name]: e.target.value})
-  }
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-  const handleSubmit = async (e) =>{
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(isSignup?"Signing Up..": "Logging In...", formData);
+    console.log(isSignup ? "Signing Up.." : "Logging In...", formData);
     try {
-      const url = isSignup ? "http://localhost:5000/api/users/register" : "http://localhost:5000/api/users/login";
-      const data = await axios.post(url, formData);
-      localStorage.setItem("token", data.data.token);
+      const url = isSignup
+        ? "http://localhost:5000/api/users/register"
+        : "http://localhost:5000/api/users/login";
+      const { data } = await axios.post(url, formData);
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify({ username: data.username }));
+
+      setUser({ username: data.username });
       toggleModal();
-      console.log("Success", data)
+      console.log("Success", data);
     } catch (error) {
       console.log("Error", error.response?.data?.message || error.message);
     }
-  }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUser(null);
+  };
 
   return (
     <div className="sticky top-0 p-8 pt-6 lg:pt-4 font-semibold text-sm leading-6 flex items-center justify-between gap-3 text-white">
@@ -49,57 +69,78 @@ const Navbar = () => {
               Add Blog
             </a>
           </li>
-          <li onClick={toggleModal} className="cursor-pointer flex gap-1 items-center">
-            {/* <img
-              src="/default_avatar.png"
-              alt="default-img"
-              className="w-8 h-auto"
-            /> */}
-            <User className="text-white" />
-            <span>Login / Signup</span>
-          </li>
+          {user ? (
+            <li className="cursor-pointer flex gap-2 items-center relative">
+              <User className="text-white" />
+              <span>{user.username}</span>
+              <button className="ml-4 bg-gray-800 p-2 rounded" onClick={handleLogout}>Logout</button>
+            </li>
+          ) : (
+            <li
+              onClick={toggleModal}
+              className="cursor-pointer flex gap-1 items-center"
+            >
+              <User className="text-white" />
+              <span>Login / Signup</span>
+            </li>
+          )}
         </ul>
       </div>
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-gray-900 p-6 rounded-lg w-96 relative">
-            <button className="absolute top-2 right-2 text-white" onClick={toggleModal}>✕</button>
-            <h2 className="text-xl font-bold text-white mb-4">{isSignup? "Signup" : "Login"}</h2>
+            <button
+              className="absolute top-2 right-2 text-white"
+              onClick={toggleModal}
+            >
+              ✕
+            </button>
+            <h2 className="text-xl font-bold text-white mb-4">
+              {isSignup ? "Signup" : "Login"}
+            </h2>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               {isSignup && (
                 <input
-                type="text"
-                name="username"
-                placeholder="Username"
-                value={formData.username}
+                  type="text"
+                  name="username"
+                  placeholder="Username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  className="p-2 rounded bg-gray-800 text-white"
+                  required
+                />
+              )}
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={formData.email}
                 onChange={handleChange}
                 className="p-2 rounded bg-gray-800 text-white"
                 required
               />
-            )}
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={handleChange}
-              className="p-2 rounded bg-gray-800 text-white"
-              required
-            />
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-              className="p-2 rounded bg-gray-800 text-white"
-              required
-            />
-            <button type="submit" className="bg-blue-600 p-2 rounded text-white">
-              {isSignup ? "Sign Up" : "Login"}
-            </button>
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
+                className="p-2 rounded bg-gray-800 text-white"
+                required
+              />
+              <button
+                type="submit"
+                className="bg-blue-600 p-2 rounded text-white"
+              >
+                {isSignup ? "Sign Up" : "Login"}
+              </button>
             </form>
-            <p className="text-white text-sm mt-4 cursor-pointer" onClick={toggleForm}>{isSignup ? "Already have an account? Login" : "New here? Signup"}</p>
+            <p
+              className="text-white text-sm mt-4 cursor-pointer"
+              onClick={toggleForm}
+            >
+              {isSignup ? "Already have an account? Login" : "New here? Signup"}
+            </p>
           </div>
         </div>
       )}
