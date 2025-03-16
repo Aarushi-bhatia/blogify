@@ -17,6 +17,7 @@ connectDB();
 
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
+app.use("/uploads", express.static("uploads"));
 
 app.use(errorHandler);
 
