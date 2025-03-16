@@ -1,41 +1,38 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { MessageCircle, ThumbsUp } from 'lucide-react'
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const blogs = [
-  {
-    Title: "The Future of AI: What’s Next?",
-    Subtitle:
-      "Exploring the latest advancements and challenges in artificial intelligence.",
-    img: "/pic.webp"
-  },
-  {
-    Title: "Machine Learning for Beginners",
-    Subtitle: "A simple guide to understanding and implementing ML models.",
-    img: "/pic2.webp"
-  },
-  {
-    Title: "Top 10 Coding Challenges Every Developer Should Try",
-    Subtitle:
-      "Sharpen your problem-solving skills with these must-try challenges.",
-    img: "/pic3.jpg"
-  },
-];
 const Blog = () => {
+  const [blogs, setBlogs] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(()=>{
+    const fetchBlogs = async () =>{
+      try {
+        const res = await axios.get("http://localhost:5000/api/posts");
+        setBlogs(res.data);
+      } catch (error) {
+        console.error("Error fetching blogs:", error);
+      }
+    }
+    fetchBlogs();
+  }, [])
+  
   return (
     <div className="h-screen items-center max-w-3xl mx-auto justify-center">
       <div className="flex-row justify-between">
-        {blogs.map((blog, index) => (
+        {blogs.map((blog) => (
           
-          <div key={index} className="p-5 flex gap-5 justify-between">
+          <div key={blog._id} className="p-5 flex gap-5 justify-between cursor-pointer"
+          onClick={()=>navigate(`/blog/${blog._id}`)} >
+
             <div>
-            <h1 className="text-white text-4xl font-bold mb-2">{blog.Title}</h1>
-            <h2 className="text-white">{blog.Subtitle}</h2>
-            {/* <div className="flex text-slate-300">
-            <ThumbsUp />
-            <MessageCircle />
-            </div> */}
+            <h1 className="text-white text-4xl font-bold mb-2">{blog.title}</h1>
+            <h2 className="text-white">{blog.subtitle}</h2>
+            
             </div>
-            <img src={blog.img} alt="" className="w-60 h-auto" />
+            <img src={blog.img} alt={blog.title} className="w-60 h-auto" />
           </div>
         ))}
       </div>
